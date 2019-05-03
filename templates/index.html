@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Robot Feeder</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="static/style.css">
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="">Robot Pet Feeder</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#C1">CONTROLS</a></li>
+        <li><a href="#C2">HISTORY</a></li>
+        <li><a href="#C3">LIVE FEED</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!-- First Container (Pet Feeder Controls) -->
+<div class="container-fluid bg-1" id="C1">
+  <h1>Pet Feeder Controls</h1>
+
+<form>
+  <div class="form-row align-items-center">
+    <div class="col-auto my-1">
+      <label class="mr-sm-2" for="inlineFormCustomSelect">Preference</label>
+      <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+        <option selected>Feeding Size</option>
+        <option value="1">Small</option>
+        <option value="2">Medium</option>
+        <option value="3">Large</option>
+      </select>
+    </div>
+    <div class="col-auto my-1">
+      <div class="custom-control custom-checkbox mr-sm-2">
+        <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+        <label class="custom-control-label" for="customControlAutosizing">Reset Scheduler</label>
+      </div>
+    </div>
+    <div class="col-auto my-1">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+</form>
+</div>
+
+
+<!-- Second Container (Feeding History) -->
+<div class="container-fluid bg-2 text-center" id="C2">
+  <script src='/static/Chart.min.js'></script>
+
+  <center>
+    <h1>{{ title }}</h1>
+
+    <canvas id="chart" width="900" height="400"></canvas>
+    
+    <!-- Graph Script -->
+    <script>
+          // bar chart data
+          var barData = {
+            labels : [
+              {% for item in labels %}
+                "{{ item }}",
+              {% endfor %}
+            ],
+            datasets : [{
+              fillColor: "rgba(151,187,205,0.2)",
+              strokeColor: "#fff",
+              pointColor: "#fff",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "#fff",
+              bezierCurve : false,
+              data : [
+    	    {% for item in values %}
+                  {{ item }},
+                {% endfor %}]
+              }
+    	]
+          }
+          Chart.defaults.global.animationSteps = 50;
+          Chart.defaults.global.tooltipYPadding = 16;
+          Chart.defaults.global.tooltipCornerRadius = 0;
+          Chart.defaults.global.tooltipTitleFontStyle = "normal";
+          Chart.defaults.global.tooltipFillColor = "rgba(0,0,0,0.8)";
+          Chart.defaults.global.animationEasing = "easeOutBounce";
+          Chart.defaults.global.responsive = false;
+          Chart.defaults.global.scaleLineColor = "black";
+          Chart.defaults.global.scaleFontSize = 16;
+          
+          // get bar chart canvas
+          var mychart = document.getElementById("chart").getContext("2d");
+          steps = 10
+          max = {{ max }}
+          
+          // draw bar chart
+          var LineChartDemo = new Chart(mychart).Line(barData, {
+            scaleOverride: true,
+            scaleSteps: steps,
+            scaleStepWidth: Math.ceil(max / steps),
+            scaleStartValue: 0,
+            scaleShowVerticalLines: true,
+            scaleShowGridLines : true,
+            barShowStroke : true,
+            scaleShowLabels: true,
+            bezierCurve: false,
+          });
+    </script>
+    
+  </center>
+</div>
+
+
+
+<!-- Third Container (Live Feed) -->
+<div class="container-fluid bg-1 text-center" id="C3">
+  <h1> Live Feed </h1>
+  <div class='section content'>
+    <img class='illustration' src='/static/image.jpg' />
+  </div>
+</div>
+
+
+
+<!-- Footer -->
+<footer class="container-fluid bg-4 text-center">
+  <p>Made by Steven Bucholtz</a></p> 
+</footer>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
