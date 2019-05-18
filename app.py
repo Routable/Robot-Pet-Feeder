@@ -27,26 +27,30 @@ def home():
 
 @app.route('/feed', methods=['POST'])
 def feed():
+
+  small = 3
+  medium = 6
+  large = 10
+
   if request.method == "POST":
     feeding_size = request.form.get("size", None)
-    if feeding_size != None:
+    if feeding_size is not None:
       flash('Feeding is in progress.')
-      
       if feeding_size == "Small":
-        action_handler.enable_motor(3)
+        action_handler.enable_motor(small)
       elif feeding_size == "Medium":
-        action_handler.enable_motor(6)
+        action_handler.enable_motor(medium)
       elif feeding_size == "Large":
-        action_handler.enable_motor(12)
+        action_handler.enable_motor(large)
       return redirect(url_for('home'))
-    
     return redirect(url_for('home'))
-    
+
+
 @app.route('/schedule', methods=['POST'])
 def schedule():
   if request.method == "POST":
     date = request.form.get("datetime", None)
-    print(date)
+    action_handler.scheduled(date)
     flash('Scheduled feeding set for ' + str(date))
     return redirect(url_for('home'))
 

@@ -10,6 +10,7 @@ from time import sleep
 import threading
 import time
 import datetime
+from datetime import date
 
 # For GPIO Pins
 import RPi.GPIO as GPIO
@@ -34,19 +35,43 @@ def get_video_feed():
 ###################################
 
 
-# Pin Controling High Torque Motor
+# Motor Initialization
 def motor_setup():
   GPIO.setwarnings(False)
   GPIO.setmode(GPIO.BCM)
-  print("Enabling Pin 16")
   GPIO.setup(gpio_pin, GPIO.OUT)
   GPIO.output(gpio_pin, 1)
 
+def scheduled_thread(date):
+  while True:
+    time.sleep(15)
+    if date == datetime.datetime.now().strftime('%I:%M %p'):
+      enable_motor(6)
+      break
+    else:
+      print(datetime.datetime.now().strftime('%I:%M %p'))
+      print(date)
+
+
+def scheduled(date):
+  try:
+    t2 = threading.Thread(target=scheduled_thread, args=[date])
+    t2.start()
+  except Exception as e:
+    print(e)
+
+
 def enable_motor_thread(seconds):
+  set_message("Manual Feed", "In Progress")
   GPIO.output(gpio_pin, 0)
   time.sleep(seconds)
   GPIO.output(gpio_pin, 1)
-  
+  clear_screen()
+  set_message("Manual Feed", "Complete")
+  time.sleep(3)
+  set_time()
+
+
 def enable_motor(seconds):
   try:
     t1 = threading.Thread(target=enable_motor_thread, args=[seconds])
@@ -75,6 +100,7 @@ def countdown_clock_thread():
   finally:
     display.lcd_clear()
 
+
 def set_countdown_clock():
   try:
     thread1 = countdown_clock_thread();
@@ -82,23 +108,19 @@ def set_countdown_clock():
   except Exception as e:
     print(e)
     
-    
-def set_status():
+
+def set_time():
   try:
     clear_screen()
-    display.lcd_display_string("Current Status", 1)
-    display.lcd_display_string(status, 2)
+    set_message("Last Fed", datetime.datetime.now().strftime('%A %I:%M%p'))
   except Exception as e:
-    print(e, "set_status")
-
+    print(e)
 
 def set_message_thread(msg_top, msg_btm):
   try:
     clear_screen()
     display.lcd_display_string(msg_top, 1)
     display.lcd_display_string(msg_btm, 2)
-    sleep(30)
-    set_status()
   except Exception as e:
     print(e, "set_message_thread")  
     
