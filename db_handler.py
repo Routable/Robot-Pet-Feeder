@@ -1,4 +1,4 @@
-import sqlalchemy as db
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 engine = db.create_engine('sqlite:///db/database.db')
@@ -14,6 +14,7 @@ feed_time = db.Table('FEED_TIME', metadata, autoload=True, autoload_with=engine)
 
 def insert_feed():
   now = datetime.now()
+  print(now)
   query = db.insert(feed_time).values(DATE=now, QTY=1) 
   ResultProxy = connection.execute(query)
 

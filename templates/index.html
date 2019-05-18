@@ -4,64 +4,130 @@
   <title>Robot Feeder</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="static/style.css">
+  
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+
+
+
+
+
+<!-- Site CSS -->
+<link rel="stylesheet" type="text/css" href="static/style.css">
+
+<!-- Datetime Picker -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
 </head>
 
-<body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-default">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
-      </button>
-      <a class="navbar-brand" href="">Robot Pet Feeder</a>
-    </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#C1">CONTROLS</a></li>
-        <li><a href="#C2">HISTORY</a></li>
-        <li><a href="#C3">LIVE FEED</a></li>
-      </ul>
-    </div>
+
+<body>
+ <!-- New Navbar -->
+ <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">ROBOPET</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse float-right" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="#C1">CONTROLS</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#C2">HISTORY</a>
+      </li>
+       <li class="nav-item">
+        <a class="nav-link" href="#C3">LIVE FEED</a>
+      </li>
+    </ul>
+    
   </div>
 </nav>
+
+
+
+
+<!-- Error and Success Messages -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+<div class="alert alert-success alert-dismissible" style="margin-bottom:0px">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Success!</strong> 
+  {% for message in messages %}
+      {{ message }}
+  {% endfor %}
+</div>
+  {% endif %}
+{% endwith %}
+
 
 
 <!-- First Container (Pet Feeder Controls) -->
 <div class="container-fluid bg-1" id="C1">
   <h1>Pet Feeder Controls</h1>
+  
+  <hr>
 
-<form>
-  <div class="form-row align-items-center">
-    <div class="col-auto my-1">
-      <label class="mr-sm-2" for="inlineFormCustomSelect">Preference</label>
-      <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-        <option selected>Feeding Size</option>
-        <option value="1">Small</option>
-        <option value="2">Medium</option>
-        <option value="3">Large</option>
+<!-- Manual Feeding Form -->
+<h1>Manual Feed</h1>
+  <form id="form1" action="/feed" method="POST" enctype="multipart/form-data">
+      <select id="feedSelect" name = "size">
+        <option value="Small">Small</option>
+        <option value="Medium">Medium</option>
+        <option value="Large">Large</option>
       </select>
+      <input type="submit" value="Feed">
+  </form>
+  
+  <hr>
+  
+  <!-- Emergency Stop Form -->
+  <h1> Emergency Stop</h1>
+  <form id="form2" action="/stop" method="POST" enctype="multipart/form-data">
+      <input type="submit" value="Emergency Stop">
+  </form>
+
+  <hr>
+  
+  <!-- Scheduled Feeding Form -->
+  <h1>Scheduled Feeding</h1>
+<form id="form3" action="/schedule" method="POST" enctype="multipart/form-data">
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker3" name="datetime"/>
+                    <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker3').datetimepicker({
+                    format: 'LT'
+                });
+            });
+        </script>
     </div>
-    <div class="col-auto my-1">
-      <div class="custom-control custom-checkbox mr-sm-2">
-        <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-        <label class="custom-control-label" for="customControlAutosizing">Reset Scheduler</label>
-      </div>
-    </div>
-    <div class="col-auto my-1">
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-  </div>
-</form>
 </div>
+  <input type="submit" value="Schedule">
+</form
+  <hr>
+
+
+  
+</div>
+
+
+
 
 
 <!-- Second Container (Feeding History) -->
